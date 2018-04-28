@@ -1,0 +1,19 @@
+{
+  "name": "asynclist",
+  "version": "1.0.0",
+  "description": "Javascript异步链，用于表单验证、数据加载等多异步事件顺序执行（用于前端） ",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ZhaoJingyan/asyncList.git"
+  },
+  "author": "Zhao Jinyan",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ZhaoJingyan/asyncList/issues"
+  },
+  "homepage": "https://github.com/ZhaoJingyan/asyncList#readme"
+}
