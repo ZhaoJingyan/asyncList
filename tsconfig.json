@@ -10,7 +10,9 @@
         // 浏览器兼容
         "module": "System",
         // 输出文件
-        "outFile": "./dist/asyncList.js"
+        "outFile": "./dist/asyncList.js",
+        // 严格模式
+        "alwaysStrict" : true
     },
     
     // 包括文件
