@@ -1,1 +1,25 @@
-{}
+{
+    // 编译配置
+    "compilerOptions": {
+        // 编译为浏览器兼容的javascript代码
+        "target": "es5",
+        // UNIX行结束符
+        "newLine": "LF",
+        // 若有未使用的局部变量则抛错
+        "noUnusedLocals": true,
+        // 浏览器兼容
+        "module": "System",
+        // 输出文件
+        "outFile": "./dist/asyncList.js"
+    },
+    
+    // 包括文件
+    "include": [
+        "./src/**/*"        
+    ],
+
+    // 排除文件
+    "exclude": [
+        "node_modules"
+    ]
+}
