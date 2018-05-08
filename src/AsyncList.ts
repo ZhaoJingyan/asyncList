@@ -103,11 +103,27 @@ namespace AsyncList {
 
     }
 
+    /**
+     * AsyncListConfig构造
+     */
     class AsyncListConfigFactory {
 
-        public static format(config : AsyncListConfig) : AsyncListConfig{
-            // TODO : 待完成
-            return config;
+        /**
+         * 将AsyncListConfig标准化
+         * @param config 
+         */
+        public static format(config: any): AsyncListConfig {
+            if (!(config.cells instanceof Array))
+                throw new Error('缺少配置项cells:Array!');
+            if(typeof config.begin !== "function")
+                config.begin = function(){};
+            if(typeof config.end !== "function")
+                config.end = function(){};
+            return <AsyncListConfig>config;
+        }
+
+        public static create(){
+
         }
 
     }
@@ -118,8 +134,8 @@ namespace AsyncList {
      */
     const facadeFunc = function (): void {
         console.log("haha");
-        if (arguments[0] === 'object')
-            new AsyncListCore(AsyncListConfigFactory.format(<AsyncListConfig>arguments[0]))
+        if (typeof arguments[0] === 'object')
+            new AsyncListCore(AsyncListConfigFactory.format(arguments[0]))
     };
 
     // 初始化
