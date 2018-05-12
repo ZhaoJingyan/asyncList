@@ -46,19 +46,62 @@ namespace AsyncList {
 
     }
 
-
+    /**
+     * 用于调度异步链
+     * @class
+     */
     class AsyncListCore implements AsyncListCoreDefinition {
+
+        /**
+         * 游标，用于记录执行到第几个cell
+         */
+        public cursor: number = -1;
+
+        /**
+         * 用于记录cell的返回值
+         */
+        public resultList: Array<any> = [];
+
+        /**
+         * Asyn List Conifg
+         */
+        public config: AsyncListConfig;
 
         /**
          * 构造方法
          * @param config 配置信息
          */
         public constructor(config: AsyncListConfig) {
-            // 待完成
+            this.config = config;
+            // 在异步链执行前执行begin函数
+            if (typeof config.begin === 'function')
+                config.begin.call(this);
+            // 当异步链长度不为零，正常执行异步链
+            if (config.cells.length != 0)
+                this.runNextCell();
         }
 
+        /**
+         * 游标向后移动，执行下一个cell
+         */
+        private runNextCell(): void {
+            this.cursor++; // 游标向后移动
+            if (this.cursor < this.config.cells.length)
+                this.config.cells[this.cursor].call(this, this, this.resultList.length == 0 ? null : this.resultList[this.resultList.length - 1]);
+            else {
+                if (typeof this.config.end === 'function')
+                    this.config.end.call(this);
+            }
+        }
+
+        /**
+         * 当cell执行成功时被调用
+         * @param result 返回值
+         */
         public success(result: any): void {
-            // TODO : 待完成
+            if (this.cursor >= 0)
+                this.resultList.push(result);
+            this.runNextCell();
         }
 
         public stop(result: any): void {
@@ -89,7 +132,7 @@ namespace AsyncList {
      * 执行单元
      */
     interface cellCore {
-        (util: AsyncListCoreDefinition): void
+        (util: AsyncListCoreDefinition, previousResult: any): void
     }
 
     /**
@@ -115,15 +158,24 @@ namespace AsyncList {
         public static format(config: any): AsyncListConfig {
             if (!(config.cells instanceof Array))
                 throw new Error('缺少配置项cells:Array!');
-            if(typeof config.begin !== "function")
-                config.begin = function(){};
-            if(typeof config.end !== "function")
-                config.end = function(){};
+            if (typeof config.begin !== "function")
+                config.begin = function () { };
+            if (typeof config.end !== "function")
+                config.end = function () { };
             return <AsyncListConfig>config;
         }
 
-        public static create(){
-
+        /**
+         * 将一串cell函数狗造成AsyncListConfig
+         * @param cells cell function list
+         */
+        public static create(...cells: any[]) {
+            let config: AsyncListConfig = { cells: [] };
+            for (let cell of cells) {
+                if (typeof cell === 'function')
+                    config.cells.push(cell);
+            }
+            return this.format(config);
         }
 
     }
@@ -134,8 +186,12 @@ namespace AsyncList {
      */
     const facadeFunc = function (): void {
         console.log("haha");
+        if (arguments.length == 0)
+            throw new Error('asyncList必须传入参数');
         if (typeof arguments[0] === 'object')
             new AsyncListCore(AsyncListConfigFactory.format(arguments[0]))
+        else
+            new AsyncListCore(AsyncListConfigFactory.create(arguments));
     };
 
     // 初始化
